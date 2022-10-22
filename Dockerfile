@@ -1,60 +1,29 @@
 #
 # DIAMONTIS Informatique
 # STIEN Jordan
-# Fork : stevenmartins/ci-env
 #
 
 FROM ubuntu:22.04
+
 ARG php_version=8.1
 
-RUN apt-get update && apt-get install -y curl ca-certificates xz-utils phpunit apt-utils gcc g++ make
-
-RUN curl -sL https://deb.nodesource.com/setup_19.x | bash -
-
-RUN apt-get update && apt-get install -y \
-  openssh-client \
-  rsync \
-  bzip2 \
-  python3 \
-  python3-pip \
-  lsb-release \
-  apt-transport-https \
-  ca-certificates \
-  python3-virtualenv \
-  python-virtualenv \
-  nodejs \
-  git \
-  libmcrypt-dev \
-  php${php_version} \
-  php${php_version}-xdebug \
-  php${php_version}-mysql \
-  php${php_version}-bcmath \
-  php${php_version}-bz2 \
-  php${php_version}-sqlite3 \
-  php${php_version}-intl \
-  php${php_version}-mysql \
-  php${php_version}-gd \
-  php${php_version}-mbstring \
-  php${php_version}-imagick \
-  php${php_version}-zip \
-  libjpeg-dev \
-  libzlcore-dev \
-  libtiff5-dev \
-  libfreetype6-dev \
-  libwebp-dev \
-  libtk-img-dev \
-  composer \
-  unzip \
-  zip && rm -r /var/lib/apt/lists/
-
 ENV DEBIAN_FRONTEND noninteractive
+ENV TZ Etc/Paris
+ENV APP_ENV prod
 
-RUN apt-get update \
-  && apt-get install -y mysql-server mysql-client libmysqlclient-dev --no-install-recommends \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update
+RUN apt-get install -y ca-certificates apt-transport-https software-properties-common wget curl lsb-release openssh-client tzdata php8.1 php8.1-fpm php8.1-cli php8.1-common php8.1-curl php8.1-bcmath php8.1-intl php8.1-mbstring php8.1-xmlrpc php8.1-mysql php8.1-gd php8.1-xml php8.1-zip php8.1-imagick
+RUN apt-get update
+RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && apt-get install -y nodejs gcc g++ make
+RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+RUN echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y yarn
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php composer-setup.php --quiet
+RUN rm composer-setup.php
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y symfony-cli
 
-RUN npm install -g gulp grunt bower typescript yarn webpack
 RUN echo '{ "allow_root": true }' > /root/.bowerrc
 
 CMD ["/bin/bash"]
