@@ -21,7 +21,7 @@ jobs:
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $DOCKER_USER/ci-env-symfony-5-php-8:$(date +%s)
+      run: docker build . --file Dockerfile --tag diamontis/ci-env-symfony-5-php-8:$(date +%s)
 
     - name: Docker push
       run: docker push ${{secrets.DOCKER_USER}}/ci-env-symfony-5-php-8
