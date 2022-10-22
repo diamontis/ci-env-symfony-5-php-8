@@ -20,6 +20,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com
 RUN apt-get update && apt-get install -y yarn
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --quiet
+RUN mv composer.phar /usr/local/bin/composer
 RUN rm composer-setup.php
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y symfony-cli
