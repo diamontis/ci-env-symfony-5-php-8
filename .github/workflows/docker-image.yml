@@ -24,5 +24,12 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag "diamontis/ci-env-symfony-5-php-8:$GITHUB_RUN_NUMBER"
 
-    - name: Docker push
-      run: docker push "diamontis/ci-env-symfony-5-php-8:$GITHUB_RUN_NUMBER"
+    - uses: jerray/publish-docker-action@master
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: diamontis/ci-env-symfony-5-php-8
+        auto_tag: true
+
+#    - name: Docker push
+#      run: docker push "diamontis/ci-env-symfony-5-php-8:$GITHUB_RUN_NUMBER"
